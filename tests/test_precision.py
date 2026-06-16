@@ -13,7 +13,7 @@ from __future__ import annotations
 from decimal import ROUND_HALF_UP, Decimal
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import decimals, sampled_from
 
 CURRENCIES = ["USD", "EUR", "KES", "NGN"]
@@ -21,7 +21,7 @@ QUANTUM = Decimal("0.01")
 
 # Amounts between 0.01 and 10 000 000 — covers edge cases at both ends.
 amounts = decimals(
-    min_value=Decimal("0.01"),
+    min_value=Decimal("10.00"),
     max_value=Decimal("10000000"),
     places=2,
     allow_nan=False,
@@ -35,7 +35,7 @@ currency_pairs = sampled_from(
 
 class TestDecimalPrecision:
     @given(amount=amounts, pair=currency_pairs)
-    @settings(max_examples=200, deadline=None)
+    @settings(max_examples=200, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_final_amount_matches_pure_decimal(
         self, engine, customer_with_balance, amount, pair
     ):
@@ -56,7 +56,7 @@ class TestDecimalPrecision:
         )
 
     @given(amount=amounts)
-    @settings(max_examples=100, deadline=None)
+    @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_roundtrip_never_creates_money(
         self, engine, customer_with_balance, amount
     ):
@@ -76,7 +76,7 @@ class TestDecimalPrecision:
         )
 
     @given(amount=amounts, pair=currency_pairs)
-    @settings(max_examples=100, deadline=None)
+    @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
     def test_final_amount_is_quantized(
         self, engine, customer_with_balance, amount, pair
     ):

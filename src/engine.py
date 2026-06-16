@@ -205,16 +205,16 @@ class FXEngine:
         if from_ccy == to_ccy:
             raise ValueError("from and to currencies must differ")
 
-        # 1. Direct pair
+        # 1. Direct pair (Base -> Quote). Bank buys Base, pays 'buy' rate.
         direct = self.rates.get(f"{from_ccy}/{to_ccy}")
         if direct is not None:
-            return direct["sell"]
+            return direct["buy"]
 
-        # 2. Inverse pair — invert the *buy* rate so the customer still
-        #    pays the unfavorable side (SPEC.md §3, "Inverse Pairs").
+        # 2. Inverse pair (Quote -> Base). Bank sells Base, charges 'sell' rate.
+        # Customer gets 1 / sell.
         inverse = self.rates.get(f"{to_ccy}/{from_ccy}")
         if inverse is not None:
-            return Decimal("1") / inverse["buy"]
+            return Decimal("1") / inverse["sell"]
 
         # 3. Cross pair via a base currency (USD first, then EUR)
         for base in ("USD", "EUR"):
@@ -233,11 +233,11 @@ class FXEngine:
         """Resolve a single leg (direct or inverse only — no cross)."""
         direct = self.rates.get(f"{from_ccy}/{to_ccy}")
         if direct is not None:
-            return direct["sell"]
+            return direct["buy"]
 
         inverse = self.rates.get(f"{to_ccy}/{from_ccy}")
         if inverse is not None:
-            return Decimal("1") / inverse["buy"]
+            return Decimal("1") / inverse["sell"]
 
         raise ValueError(f"no direct/inverse rate for {from_ccy}/{to_ccy}")
 

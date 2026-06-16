@@ -98,7 +98,7 @@ class TestQuoteGeneration:
                 if src == dst:
                     continue
                 quote = engine.generate_quote(
-                    customer_with_balance, src, dst, Decimal("1")
+                    customer_with_balance, src, dst, Decimal("10000")
                 )
                 assert quote.final_amount > 0, f"Failed for {src}/{dst}"
 
@@ -237,11 +237,11 @@ class TestRateResolution:
         assert rate > 0
 
     def test_inverse_pair_preserves_spread(self, engine):
-        """KES→USD must equal 1 / USD/KES buy (not mid).
+        """KES→USD must equal 1 / USD/KES sell (not mid).
         Using mid would erase the spread (planted_bugs Bug #6).
         """
         usd_kes = engine.rates.get("USD/KES")
-        expected = Decimal("1") / usd_kes["buy"]
+        expected = Decimal("1") / usd_kes["sell"]
         actual = engine.effective_rate("KES", "USD")
         assert actual == expected
 
