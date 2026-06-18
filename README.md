@@ -46,3 +46,10 @@ python -m pytest tests/ -v
 uvicorn src.main:app --reload
 ```
 View the interactive API documentation at: http://127.0.0.1:8000/docs
+
+## ⏱️ Time Budget Breakdown
+* **Wall-Clock Time:** ~36 hours (Received the assignment Tuesday evening, submitted Thursday morning).
+* **Active Engagement Time:** ~6 hours total.
+  * *1 hr:* Reviewing baseline and writing `SPEC.md`.
+  * *3 hrs:* Orchestrating AI agents, debugging spread math, and writing the core engine/tests.
+  * *2 hrs:* Code review of the planted bugs and finalizing documentation.
